@@ -27,6 +27,14 @@
       padding: 8px;
       border: none;
       margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .order-btn {
+      background: green;
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
     }
   </style>
 </head>
@@ -38,6 +46,9 @@
 <div id="cartItems"></div>
 
 <h2 id="total"></h2>
+
+<!-- ✅ Place Order button (இங்க தான் add பண்ணணும்) -->
+<button class="order-btn" onclick="placeOrder()">Place Order</button>
 
 <script>
 
@@ -64,12 +75,42 @@ function loadCart() {
   document.getElementById("total").innerText = "Total: ₹" + total;
 }
 
+// ❌ Remove item
 function removeItem(index) {
   cart.splice(index, 1);
   localStorage.setItem("cart", JSON.stringify(cart));
   loadCart();
 }
 
+// 🛒 Place Order (இங்க தான் function add பண்ணணும்)
+function placeOrder() {
+
+  if (cart.length === 0) {
+    alert("Cart is empty ❌");
+    return;
+  }
+
+  let total = 0;
+  cart.forEach(item => total += item.price);
+
+  fetch("https://fark618.onrender.com/orders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      items: cart,
+      total: total
+    })
+  })
+  .then(() => {
+    alert("Order placed successfully ✅");
+    localStorage.removeItem("cart");
+    location.reload();
+  });
+}
+
+// initial load
 loadCart();
 
 </script>
