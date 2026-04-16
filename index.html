@@ -98,7 +98,24 @@ fetch("https://fark618.onrender.com/products")
   .catch(() => {
     document.getElementById("products").innerHTML = "Error loading products";
   });
+function addProduct() {
+  const name = document.getElementById("name").value;
+  const price = document.getElementById("price").value;
+  const stock = document.getElementById("stock").value;
+  const image = document.getElementById("image").value;
 
+  fetch("https://fark618.onrender.com/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, price, stock, image })
+  })
+  .then(() => {
+    alert("Product added!");
+    location.reload();
+  });
+}
 </script>
 
 </body>
