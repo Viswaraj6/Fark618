@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>FARK 618 Store</title>
+
   <style>
     body {
       font-family: Arial;
@@ -56,6 +57,7 @@
 <div id="products" class="products">Loading...</div>
 
 <script>
+
 let cartCount = 0;
 
 function addToCart() {
@@ -66,6 +68,7 @@ function addToCart() {
 fetch("https://fark618.onrender.com/products")
   .then(res => res.json())
   .then(data => {
+
     let html = "";
 
     data.forEach(p => {
@@ -79,43 +82,13 @@ fetch("https://fark618.onrender.com/products")
     });
 
     document.getElementById("products").innerHTML = html;
+
   })
   .catch(() => {
     document.getElementById("products").innerHTML = "Error loading products";
   });
+
 </script>
-
-</body>
-</html>    ];
-
-    let cartCount = 0;
-
-    function addToCart() {
-      cartCount++;
-      document.getElementById("cart").innerText = "Cart: " + cartCount;
-    }
-
-    let html = "";
-
-    data.forEach((p, i) => {
-      html += `
-        <div class="card">
-          <h3>${p.name}</h3>
-          <p class="price">₹${p.price}</p>
-          <button onclick="addToCart()">Add to Cart</button>
-        </div>
-      `;
-    });
-
-    document.getElementById("products").innerHTML = html;
-  </script>
-
-</body>
-</html>      `;
-    });
-
-    document.getElementById("products").innerHTML = html;
-  </script>
 
 </body>
 </html>
