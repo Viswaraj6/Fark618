@@ -1,142 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FARK 618 Store</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f5f5;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    #cart {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: black;
-      color: white;
-      padding: 10px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-    }
-
-    .card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-
-    button {
-      background: black;
-      color: white;
-      padding: 10px;
-      border: none;
-      margin-top: 10px;
-    }
-
-    button:disabled {
-      background: grey;
-    }
-  </style>
+  <title>FARK 618</title>
 </head>
-
 <body>
 
 <div id="cart" onclick="goToCart()">Cart: 0</div>
 
-<h1>FARK 618 🛍️</h1>
-
-<div id="products" class="products"></div>
+<h1>Store</h1>
+<div id="products"></div>
 
 <script>
-
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let productsData = [];
 
 document.getElementById("cart").innerText = "Cart: " + cart.length;
 
-// Load products
 function loadProducts() {
-  fetch("https://fark618.onrender.com/products")
-  .then(res => res.json())
-  .then(data => {
-
-    productsData = data;
-
-    let html = "";
-
-    data.forEach(p => {
-      html += `
-        <div class="card">
-          <img src="${p.image}">
-          <h3>${p.name}</h3>
-          <p>₹${p.price}</p>
-          <p>Stock: ${p.stock}</p>
-
-          <button onclick="addToCart(${p.id})"
-            ${p.stock == 0 ? "disabled" : ""}>
-            ${p.stock == 0 ? "Out of Stock" : "Add to Cart"}
-          </button>
-        </div>
-      `;
-    });
-
-    document.getElementById("products").innerHTML = html;
-  });
+ fetch("https://fark618.onrender.com/products")
+ .then(res=>res.json())
+ .then(data=>{
+   productsData=data;
+   let html="";
+   data.forEach(p=>{
+     html+=`
+     <div>
+      <img src="${p.image}" width="150">
+      <h3>${p.name}</h3>
+      <p>${p.price}</p>
+      <button onclick="addToCart(${p.id})">Add</button>
+     </div>`;
+   });
+   document.getElementById("products").innerHTML=html;
+ });
 }
 
-// Add to cart
-function addToCart(id) {
+function addToCart(id){
+ let p=productsData.find(x=>x.id==id);
+ cart.push(p);
+ localStorage.setItem("cart",JSON.stringify(cart));
 
-  const product = productsData.find(p => p.id == id);
-
-  if (product.stock <= 0) {
-    alert("Out of stock");
-    return;
-  }
-
-  cart.push(product);
-  localStorage.setItem("cart", JSON.stringify(cart));
-
-  document.getElementById("cart").innerText = "Cart: " + cart.length;
-
-  fetch("https://fark618.onrender.com/products/" + id, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: product.name,
-      price: product.price,
-      stock: product.stock - 1,
-      image: product.image
-    })
-  })
-  .then(() => loadProducts());
+ fetch("https://fark618.onrender.com/products/"+id,{
+   method:"PUT",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({...p,stock:p.stock-1})
+ }).then(loadProducts);
 }
 
-function goToCart() {
-  window.location.href = "cart.html";
+function goToCart(){
+ location.href="cart.html";
 }
 
 loadProducts();
-
 </script>
 
 </body>
