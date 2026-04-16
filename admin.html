@@ -1,157 +1,66 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Admin Panel</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-
-    input {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      width: 250px;
-    }
-
-    button {
-      padding: 10px 15px;
-      background: black;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-top: 5px;
-    }
-
-    .card {
-      background: white;
-      padding: 15px;
-      margin: 10px;
-      border-radius: 10px;
-    }
-
-    img {
-      width: 150px;
-      border-radius: 10px;
-    }
-  </style>
-</head>
-
 <body>
 
-<!-- 🔐 LOGIN -->
-<div id="loginBox">
-  <h2>Admin Login 🔐</h2>
-  <input id="user" placeholder="Username">
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-</div>
+<h1>Admin</h1>
 
-<!-- 🔧 ADMIN PANEL -->
-<div id="adminPanel" style="display:none;">
-  <h1>Admin Panel 🔧</h1>
+<input id="name" placeholder="Name">
+<input id="price" placeholder="Price">
+<input id="stock" placeholder="Stock">
+<input id="image" placeholder="Image">
+<button onclick="add()">Add</button>
 
-  <h2>Add Product</h2>
-  <input id="name" placeholder="Product name">
-  <input id="price" placeholder="Price">
-  <input id="stock" placeholder="Stock">
-  <input id="image" placeholder="Image URL">
+<h2>Products</h2>
+<div id="products"></div>
 
-  <button onclick="addProduct()">Add Product</button>
-
-  <h2>All Products</h2>
-  <div id="products"></div>
-</div>
+<h2>Orders</h2>
+<div id="orders"></div>
 
 <script>
 
-// 🔐 LOGIN
-function login() {
-  const u = document.getElementById("user").value;
-  const p = document.getElementById("pass").value;
-
-  if (u === "admin" && p === "1234") {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
-    loadProducts();
-  } else {
-    alert("Wrong login!");
-  }
+function add(){
+ fetch("https://fark618.onrender.com/products",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+    name:name.value,
+    price:price.value,
+    stock:stock.value,
+    image:image.value
+  })
+ }).then(load);
 }
 
-// ➕ ADD PRODUCT
-function addProduct() {
-  const name = document.getElementById("name").value;
-  const price = document.getElementById("price").value;
-  const stock = document.getElementById("stock").value;
-  const image = document.getElementById("image").value;
-
-  fetch("https://fark618.onrender.com/products", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name, price, stock, image })
-  })
-  .then(() => {
-    alert("Product Added!");
-    loadProducts();
+function load(){
+ fetch("https://fark618.onrender.com/products")
+ .then(r=>r.json())
+ .then(d=>{
+  let html="";
+  d.forEach(p=>{
+   html+=`<div>${p.name} ₹${p.price}
+   <button onclick="del(${p.id})">X</button></div>`;
   });
+  products.innerHTML=html;
+ });
+
+ fetch("https://fark618.onrender.com/orders")
+ .then(r=>r.json())
+ .then(d=>{
+  let html="";
+  d.forEach(o=>{
+   html+=`<div>Order ₹${o.total}</div>`;
+  });
+  orders.innerHTML=html;
+ });
 }
 
-// 📦 LOAD PRODUCTS
-function loadProducts() {
-  fetch("https://fark618.onrender.com/products")
-    .then(res => res.json())
-    .then(data => {
-
-      let html = "";
-
-      data.forEach(p => {
-        html += `
-          <div class="card">
-            <img src="${p.image}" />
-            <h3>${p.name}</h3>
-            <p>₹${p.price}</p>
-            <p>Stock: ${p.stock}</p>
-
-            <button onclick="deleteProduct(${p.id})">Delete</button>
-            <button onclick="editProduct(${p.id})">Edit</button>
-          </div>
-        `;
-      });
-
-      document.getElementById("products").innerHTML = html;
-    });
+function del(id){
+ fetch("https://fark618.onrender.com/products/"+id,{
+  method:"DELETE"
+ }).then(load);
 }
 
-// ❌ DELETE
-function deleteProduct(id) {
-  fetch("https://fark618.onrender.com/products/" + id, {
-    method: "DELETE"
-  })
-  .then(() => loadProducts());
-}
-
-// ✏️ EDIT
-function editProduct(id) {
-  const name = prompt("New name:");
-  const price = prompt("New price:");
-  const stock = prompt("New stock:");
-  const image = prompt("New image URL:");
-
-  fetch("https://fark618.onrender.com/products/" + id, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name, price, stock, image })
-  })
-  .then(() => loadProducts());
-}
+load();
 
 </script>
 
