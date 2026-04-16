@@ -91,7 +91,7 @@
             <p>₹${p.price}</p>
             <p>Stock: ${p.stock}</p>
 
-            <button onclick="addToCart()">Add to Cart</button>
+            <button onclick="addToCart(${p.id}, ${p.stock})">Add to Cart</button>
           </div>
         `;
       });
