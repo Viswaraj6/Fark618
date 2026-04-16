@@ -55,16 +55,6 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
-    .admin {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .admin input {
-      padding: 8px;
-      margin: 5px;
-    }
   </style>
 </head>
 
@@ -74,19 +64,6 @@
   <div id="cart">Cart: 0</div>
 
   <h1>FARK 618 🛍️</h1>
-
-  <!-- 🔥 ADMIN PANEL -->
-  <div class="admin">
-    <h2>Admin Panel</h2>
-
-    <input id="name" placeholder="Product name">
-    <input id="price" placeholder="Price">
-    <input id="stock" placeholder="Stock">
-    <input id="image" placeholder="Image URL">
-
-    <br>
-    <button onclick="addProduct()">Add Product</button>
-  </div>
 
   <!-- 🛍️ PRODUCTS -->
   <div id="products" class="products">Loading...</div>
@@ -99,26 +76,6 @@
       document.getElementById("cart").innerText = "Cart: " + cartCount;
     }
 
-    // 🔥 ADD PRODUCT (ADMIN)
-    function addProduct() {
-      const name = document.getElementById("name").value;
-      const price = document.getElementById("price").value;
-      const stock = document.getElementById("stock").value;
-      const image = document.getElementById("image").value;
-
-      fetch("https://fark618.onrender.com/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ name, price, stock, image })
-      })
-      .then(() => {
-        alert("Product added!");
-        location.reload();
-      });
-    }
-
     // 🔥 LOAD PRODUCTS
     fetch("https://fark618.onrender.com/products")
     .then(res => res.json())
@@ -127,48 +84,24 @@
       let html = "";
 
       data.forEach(p => {
-  html += `
-    <div class="card">
-      <img src="${p.image}" />
-      <h3>${p.name}</h3>
-      <p>₹${p.price}</p>
-      <p>Stock: ${p.stock}</p>
+        html += `
+          <div class="card">
+            <img src="${p.image}" />
+            <h3>${p.name}</h3>
+            <p>₹${p.price}</p>
+            <p>Stock: ${p.stock}</p>
 
-      <button onclick="addToCart()">Add to Cart</button>
-      <br>
-      <button onclick="deleteProduct(${p.id})">Delete</button>
-      <button onclick="editProduct(${p.id})">Edit</button>
-    </div>
-  `;
-});
+            <button onclick="addToCart()">Add to Cart</button>
+          </div>
+        `;
+      });
 
       document.getElementById("products").innerHTML = html;
     })
     .catch(() => {
       document.getElementById("products").innerText = "Error loading products";
     });
-function deleteProduct(id) {
-  fetch("https://fark618.onrender.com/products/" + id, {
-    method: "DELETE"
-  })
-  .then(() => location.reload());
-}
 
-function editProduct(id) {
-  const name = prompt("New name:");
-  const price = prompt("New price:");
-  const stock = prompt("New stock:");
-  const image = prompt("New image URL:");
-
-  fetch("https://fark618.onrender.com/products/" + id, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name, price, stock, image })
-  })
-  .then(() => location.reload());
-}
   </script>
 
 </body>
