@@ -2,7 +2,6 @@
 <html>
 <head>
   <title>FARK 618 Store</title>
-
   <style>
     body {
       font-family: Arial;
@@ -15,60 +14,79 @@
     }
 
     #cart {
-      position: fixed;
-      top: 10px;
-      right: 10px;
+      position: absolute;
+      right: 20px;
+      top: 20px;
       background: black;
       color: white;
       padding: 10px 15px;
       border-radius: 10px;
     }
 
-    #products {
+    .products {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
       padding: 20px;
     }
 
     .card {
       background: white;
-      padding: 15px;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .price {
-      color: green;
-      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     button {
-      margin-top: 10px;
-      padding: 8px 12px;
-      border: none;
       background: black;
       color: white;
+      border: none;
+      padding: 10px;
       border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>FARK 618 Store 🛍️</h1>
+<h1>FARK 618 Store 🛍️</h1>
+<div id="cart">Cart: 0</div>
 
-  <div id="cart">Cart: 0</div>
+<div id="products" class="products">Loading...</div>
 
-  <div id="products"></div>
+<script>
+let cartCount = 0;
 
-  <script>
-    const data = [
-      { name: "Blue Shirt", price: 799 },
-      { name: "Black T-Shirt", price: 499 },
-      { name: "White Shirt", price: 899 },
-      { name: "Grey Hoodie", price: 1299 }
-    ];
+function addToCart() {
+  cartCount++;
+  document.getElementById("cart").innerText = "Cart: " + cartCount;
+}
+
+fetch("https://fark618.onrender.com/products")
+  .then(res => res.json())
+  .then(data => {
+    let html = "";
+
+    data.forEach(p => {
+      html += `
+        <div class="card">
+          <h3>${p.name}</h3>
+          <p>₹${p.price}</p>
+          <button onclick="addToCart()">Add to Cart</button>
+        </div>
+      `;
+    });
+
+    document.getElementById("products").innerHTML = html;
+  })
+  .catch(() => {
+    document.getElementById("products").innerHTML = "Error loading products";
+  });
+</script>
+
+</body>
+</html>    ];
 
     let cartCount = 0;
 
