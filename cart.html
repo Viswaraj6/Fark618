@@ -1,48 +1,78 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Cart</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .item {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    button {
+      background: red;
+      color: white;
+      border: none;
+      padding: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
 <body>
 
-<h1>Cart</h1>
-<div id="items"></div>
+<h1>🛒 Your Cart</h1>
+
+<div id="cartItems"></div>
+
 <h2 id="total"></h2>
-<button onclick="placeOrder()">Place Order</button>
 
 <script>
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
 
-function load(){
- let html="",total=0;
- cart.forEach((i,idx)=>{
-   total+=i.price;
-   html+=`<div>${i.name} ₹${i.price}
-   <button onclick="remove(${idx})">X</button></div>`;
- });
- document.getElementById("items").innerHTML=html;
- document.getElementById("total").innerText="Total:"+total;
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function loadCart() {
+
+  let html = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price;
+
+    html += `
+      <div class="item">
+        <h3>${item.name}</h3>
+        <p>₹${item.price}</p>
+        <button onclick="removeItem(${index})">Remove</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("cartItems").innerHTML = html;
+  document.getElementById("total").innerText = "Total: ₹" + total;
 }
 
-function remove(i){
- cart.splice(i,1);
- localStorage.setItem("cart",JSON.stringify(cart));
- load();
+function removeItem(index) {
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
 }
 
-function placeOrder(){
- fetch("https://fark618.onrender.com/orders",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({
-     items:cart,
-     total:cart.reduce((a,b)=>a+b.price,0)
-   })
- }).then(()=>{
-   alert("Order placed");
-   localStorage.removeItem("cart");
-   load();
- });
-}
+loadCart();
 
-load();
 </script>
 
 </body>
