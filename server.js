@@ -32,7 +32,7 @@ image: "https://via.placeholder.com/300x200?text=Blue+Shirt"
       name: "Grey Hoodie",
       price: 1299,
       stock: 8,
-      image: "https://via.placeholder.com/300x200?text=Blue+Shirt"
+      image: "https://via.placeholder.com/300x200?text=Grey+Hoodie"
     }
   ]);
 });
