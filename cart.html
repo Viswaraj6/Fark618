@@ -60,7 +60,8 @@ function loadCart() {
   let total = 0;
 
   cart.forEach((item, index) => {
-    total += item.price;
+
+    total += Number(item.price); // ✅ இங்க தான் change
 
     html += `
       <div class="item">
@@ -74,7 +75,6 @@ function loadCart() {
   document.getElementById("cartItems").innerHTML = html;
   document.getElementById("total").innerText = "Total: ₹" + total;
 }
-
 // ❌ Remove item
 function removeItem(index) {
   cart.splice(index, 1);
