@@ -136,31 +136,34 @@ function loadProducts() {
 }
 
 // 📦 LOAD ORDERS (NEW)
-
 function loadOrders() {
   fetch("https://fark618.onrender.com/orders")
     .then(res => res.json())
     .then(data => {
 
-      let grouped = {};
+      let html = "";
 
-o.items.forEach(item => {
-  if (!grouped[item.name]) {
-    grouped[item.name] = { qty: 0, price: item.price };
-  }
-  grouped[item.name].qty++;
-});
+      data.forEach(o => {
 
-let itemsHtml = "";
+        let grouped = {};
 
-for (let name in grouped) {
-  const item = grouped[name];
-  itemsHtml += `
-    <li>
-      ${name} × ${item.qty} - ₹${item.price * item.qty}
-    </li>
-  `;
-}
+        o.items.forEach(item => {
+          if (!grouped[item.name]) {
+            grouped[item.name] = { qty: 0, price: item.price };
+          }
+          grouped[item.name].qty++;
+        });
+
+        let itemsHtml = "";
+
+        for (let name in grouped) {
+          const item = grouped[name];
+          itemsHtml += `
+            <li>
+              ${name} × ${item.qty} - ₹${item.price * item.qty}
+            </li>
+          `;
+        }
 
         html += `
           <div class="card">
@@ -178,14 +181,6 @@ for (let name in grouped) {
       document.getElementById("orders").innerHTML = html;
     });
 }
-// ❌ DELETE
-function deleteProduct(id) {
-  fetch("https://fark618.onrender.com/products/" + id, {
-    method: "DELETE"
-  })
-  .then(() => loadProducts());
-}
-
 // ✏️ EDIT
 function editProduct(id) {
   const name = prompt("New name:");
