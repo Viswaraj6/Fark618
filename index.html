@@ -7,7 +7,6 @@
     body {
       font-family: Arial;
       background: #f5f5f5;
-      margin: 0;
       padding: 20px;
     }
 
@@ -23,6 +22,7 @@
       color: white;
       padding: 10px;
       border-radius: 10px;
+      cursor: pointer;
     }
 
     .products {
@@ -36,70 +36,63 @@
       padding: 15px;
       border-radius: 10px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .card img {
       width: 100%;
       height: 200px;
       object-fit: cover;
-      border-radius: 10px;
     }
 
     button {
       background: black;
       color: white;
-      border: none;
       padding: 10px;
+      border: none;
       margin-top: 10px;
-      border-radius: 5px;
-      cursor: pointer;
     }
 
     button:disabled {
       background: grey;
-      cursor: not-allowed;
     }
   </style>
 </head>
 
 <body>
 
-<!-- 🛒 Cart -->
-<div id="cart">Cart: 0</div>
+<div id="cart" onclick="goToCart()">Cart: 0</div>
 
 <h1>FARK 618 🛍️</h1>
 
-<!-- 🛍️ PRODUCTS -->
-<div id="products" class="products">Loading...</div>
+<div id="products" class="products"></div>
 
 <script>
 
-let cartCount = 0;
-let productsData = []; // ⭐ important
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let productsData = [];
 
-// 🔥 Load products
+document.getElementById("cart").innerText = "Cart: " + cart.length;
+
+// Load products
 function loadProducts() {
   fetch("https://fark618.onrender.com/products")
   .then(res => res.json())
   .then(data => {
 
-    productsData = data; // store locally
+    productsData = data;
 
     let html = "";
 
     data.forEach(p => {
       html += `
         <div class="card">
-          <img src="${p.image}" />
+          <img src="${p.image}">
           <h3>${p.name}</h3>
           <p>₹${p.price}</p>
           <p>Stock: ${p.stock}</p>
 
-          <button 
-            onclick="addToCart(${p.id})"
-            ${p.stock == 0 ? "disabled" : ""}
-          >
+          <button onclick="addToCart(${p.id})"
+            ${p.stock == 0 ? "disabled" : ""}>
             ${p.stock == 0 ? "Out of Stock" : "Add to Cart"}
           </button>
         </div>
@@ -107,39 +100,27 @@ function loadProducts() {
     });
 
     document.getElementById("products").innerHTML = html;
-
-  })
-  .catch(() => {
-    document.getElementById("products").innerText = "Error loading products";
   });
 }
 
-
-// 🛒 Add to cart + reduce stock
+// Add to cart
 function addToCart(id) {
 
   const product = productsData.find(p => p.id == id);
 
-  if (!product) {
-    alert("Product not found ❌");
-    return;
-  }
-
   if (product.stock <= 0) {
-    alert("Out of stock ❌");
+    alert("Out of stock");
     return;
   }
 
-  // cart count update
-  cartCount++;
-  document.getElementById("cart").innerText = "Cart: " + cartCount;
+  cart.push(product);
+  localStorage.setItem("cart", JSON.stringify(cart));
 
-  // update stock in backend
+  document.getElementById("cart").innerText = "Cart: " + cart.length;
+
   fetch("https://fark618.onrender.com/products/" + id, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       name: product.name,
       price: product.price,
@@ -147,13 +128,13 @@ function addToCart(id) {
       image: product.image
     })
   })
-  .then(() => {
-    loadProducts(); // refresh UI without reload
-  });
+  .then(() => loadProducts());
 }
 
+function goToCart() {
+  window.location.href = "cart.html";
+}
 
-// first load
 loadProducts();
 
 </script>
