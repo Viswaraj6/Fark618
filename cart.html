@@ -90,9 +90,9 @@ function placeOrder() {
     return;
   }
 
-  let total = 0;
-  cart.forEach(item => total += item.price);
-
+  letcart.forEach(item => {
+  total += Number(item.price || 0);
+});
   fetch("https://fark618.onrender.com/orders", {
     method: "POST",
     headers: {
