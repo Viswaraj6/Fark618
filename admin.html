@@ -64,6 +64,11 @@
 
   <h2>All Products</h2>
   <div id="products"></div>
+
+  <!-- ✅ ORDERS SECTION (இங்க add பண்ணணும்) -->
+  <h2>Orders</h2>
+  <div id="orders"></div>
+
 </div>
 
 <script>
@@ -76,7 +81,9 @@ function login() {
   if (u === "admin" && p === "1234") {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("adminPanel").style.display = "block";
+
     loadProducts();
+    loadOrders(); // ⭐ IMPORTANT
   } else {
     alert("Wrong login!");
   }
@@ -125,6 +132,28 @@ function loadProducts() {
       });
 
       document.getElementById("products").innerHTML = html;
+    });
+}
+
+// 📦 LOAD ORDERS (NEW)
+function loadOrders() {
+  fetch("https://fark618.onrender.com/orders")
+    .then(res => res.json())
+    .then(data => {
+
+      let html = "";
+
+      data.forEach(o => {
+        html += `
+          <div class="card">
+            <h3>Order ID: ${o.id}</h3>
+            <p>Total: ₹${o.total}</p>
+            <p>Items: ${o.items.length}</p>
+          </div>
+        `;
+      });
+
+      document.getElementById("orders").innerHTML = html;
     });
 }
 
