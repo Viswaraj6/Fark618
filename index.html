@@ -109,15 +109,24 @@ function addToCart(id) {
   const product = productsData.find(p => p.id == id);
 
   if (product.stock <= 0) {
-    alert("Out of stock");
+    alert("Out of stock ❌");
     return;
   }
 
-  cart.push(product);
+  // 🔥 clean data மட்டும் cartல save
+  const cartItem = {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.image
+  };
+
+  cart.push(cartItem);
   localStorage.setItem("cart", JSON.stringify(cart));
 
   document.getElementById("cart").innerText = "Cart: " + cart.length;
 
+  // 🔥 stock reduce backend
   fetch("https://fark618.onrender.com/products/" + id, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
