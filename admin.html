@@ -23,6 +23,7 @@
       color: white;
       border: none;
       cursor: pointer;
+      margin-top: 5px;
     }
 
     .card {
@@ -34,27 +35,27 @@
 
     img {
       width: 150px;
+      border-radius: 10px;
     }
   </style>
 </head>
 
 <body>
 
-<h1>Admin Panel 🔧</h1>
-
-<!-- 🔐 Login -->
-<div id="login">
-  <input id="username" placeholder="Username">
-  <input id="password" type="password" placeholder="Password">
+<!-- 🔐 LOGIN -->
+<div id="loginBox">
+  <h2>Admin Login 🔐</h2>
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
 </div>
 
-<!-- 📦 Admin -->
-<div id="admin" style="display:none">
+<!-- 🔧 ADMIN PANEL -->
+<div id="adminPanel" style="display:none;">
+  <h1>Admin Panel 🔧</h1>
 
   <h2>Add Product</h2>
-
-  <input id="name" placeholder="Name">
+  <input id="name" placeholder="Product name">
   <input id="price" placeholder="Price">
   <input id="stock" placeholder="Stock">
   <input id="image" placeholder="Image URL">
@@ -63,26 +64,25 @@
 
   <h2>All Products</h2>
   <div id="products"></div>
-
 </div>
 
 <script>
 
-// 🔐 Login check
+// 🔐 LOGIN
 function login() {
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
 
-  if (user === "admin" && pass === "1234") {
-    document.getElementById("login").style.display = "none";
-    document.getElementById("admin").style.display = "block";
+  if (u === "admin" && p === "1234") {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
     loadProducts();
   } else {
-    alert("Wrong login");
+    alert("Wrong login!");
   }
 }
 
-// ➕ Add
+// ➕ ADD PRODUCT
 function addProduct() {
   const name = document.getElementById("name").value;
   const price = document.getElementById("price").value;
@@ -97,12 +97,12 @@ function addProduct() {
     body: JSON.stringify({ name, price, stock, image })
   })
   .then(() => {
-    alert("Added!");
+    alert("Product Added!");
     loadProducts();
   });
 }
 
-// 📦 Load products
+// 📦 LOAD PRODUCTS
 function loadProducts() {
   fetch("https://fark618.onrender.com/products")
     .then(res => res.json())
@@ -128,7 +128,7 @@ function loadProducts() {
     });
 }
 
-// ❌ Delete
+// ❌ DELETE
 function deleteProduct(id) {
   fetch("https://fark618.onrender.com/products/" + id, {
     method: "DELETE"
@@ -136,12 +136,12 @@ function deleteProduct(id) {
   .then(() => loadProducts());
 }
 
-// ✏️ Edit
+// ✏️ EDIT
 function editProduct(id) {
   const name = prompt("New name:");
   const price = prompt("New price:");
   const stock = prompt("New stock:");
-  const image = prompt("New image:");
+  const image = prompt("New image URL:");
 
   fetch("https://fark618.onrender.com/products/" + id, {
     method: "PUT",
