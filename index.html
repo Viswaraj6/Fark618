@@ -55,54 +55,100 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    button:disabled {
+      background: grey;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- 🛒 Cart -->
-  <div id="cart">Cart: 0</div>
+<!-- 🛒 Cart -->
+<div id="cart">Cart: 0</div>
 
-  <h1>FARK 618 🛍️</h1>
+<h1>FARK 618 🛍️</h1>
 
-  <!-- 🛍️ PRODUCTS -->
-  <div id="products" class="products">Loading...</div>
+<!-- 🛍️ PRODUCTS -->
+<div id="products" class="products">Loading...</div>
 
-  <script>
-    let cartCount = 0;
+<script>
 
-    function addToCart() {
-      cartCount++;
-      document.getElementById("cart").innerText = "Cart: " + cartCount;
+let cartCount = 0;
+
+// 🛒 Add to Cart + Reduce Stock
+function addToCart(id) {
+
+  fetch("https://fark618.onrender.com/products/" + id)
+  .then(res => res.json())
+  .then(product => {
+
+    if (product.stock <= 0) {
+      alert("Out of stock ❌");
+      return;
     }
 
-    // 🔥 LOAD PRODUCTS
-    fetch("https://fark618.onrender.com/products")
-    .then(res => res.json())
-    .then(data => {
+    cartCount++;
+    document.getElementById("cart").innerText = "Cart: " + cartCount;
 
-      let html = "";
-
-      data.forEach(p => {
-        html += `
-          <div class="card">
-            <img src="${p.image}" />
-            <h3>${p.name}</h3>
-            <p>₹${p.price}</p>
-            <p>Stock: ${p.stock}</p>
-
-            <button onclick="addToCart(${p.id}, ${p.stock})">Add to Cart</button>
-          </div>
-        `;
-      });
-
-      document.getElementById("products").innerHTML = html;
+    // update stock
+    fetch("https://fark618.onrender.com/products/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: product.name,
+        price: product.price,
+        stock: product.stock - 1,
+        image: product.image
+      })
     })
-    .catch(() => {
-      document.getElementById("products").innerText = "Error loading products";
+    .then(() => location.reload());
+
+  });
+}
+
+
+// 🔥 Load Products
+function loadProducts() {
+  fetch("https://fark618.onrender.com/products")
+  .then(res => res.json())
+  .then(data => {
+
+    let html = "";
+
+    data.forEach(p => {
+      html += `
+        <div class="card">
+          <img src="${p.image}" />
+          <h3>${p.name}</h3>
+          <p>₹${p.price}</p>
+          <p>Stock: ${p.stock}</p>
+
+          <button 
+            onclick="addToCart(${p.id})"
+            ${p.stock == 0 ? "disabled" : ""}
+          >
+            ${p.stock == 0 ? "Out of Stock" : "Add to Cart"}
+          </button>
+        </div>
+      `;
     });
 
-  </script>
+    document.getElementById("products").innerHTML = html;
+
+  })
+  .catch(() => {
+    document.getElementById("products").innerText = "Error loading products";
+  });
+}
+
+// load first time
+loadProducts();
+
+</script>
 
 </body>
 </html>
