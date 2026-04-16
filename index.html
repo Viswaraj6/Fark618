@@ -147,7 +147,28 @@
     .catch(() => {
       document.getElementById("products").innerText = "Error loading products";
     });
+function deleteProduct(id) {
+  fetch("https://fark618.onrender.com/products/" + id, {
+    method: "DELETE"
+  })
+  .then(() => location.reload());
+}
 
+function editProduct(id) {
+  const name = prompt("New name:");
+  const price = prompt("New price:");
+  const stock = prompt("New stock:");
+  const image = prompt("New image URL:");
+
+  fetch("https://fark618.onrender.com/products/" + id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, price, stock, image })
+  })
+  .then(() => location.reload());
+}
   </script>
 
 </body>
