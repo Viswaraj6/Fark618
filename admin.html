@@ -136,6 +136,7 @@ function loadProducts() {
 }
 
 // 📦 LOAD ORDERS (NEW)
+
 function loadOrders() {
   fetch("https://fark618.onrender.com/orders")
     .then(res => res.json())
@@ -144,11 +145,24 @@ function loadOrders() {
       let html = "";
 
       data.forEach(o => {
+
+        let itemsHtml = "";
+
+        o.items.forEach(item => {
+          itemsHtml += `
+            <li>${item.name} - ₹${item.price}</li>
+          `;
+        });
+
         html += `
           <div class="card">
             <h3>Order ID: ${o.id}</h3>
-            <p>Total: ₹${o.total}</p>
-            <p>Items: ${o.items.length}</p>
+            <p><b>Total:</b> ₹${o.total}</p>
+
+            <p><b>Items:</b></p>
+            <ul>
+              ${itemsHtml}
+            </ul>
           </div>
         `;
       });
@@ -156,7 +170,6 @@ function loadOrders() {
       document.getElementById("orders").innerHTML = html;
     });
 }
-
 // ❌ DELETE
 function deleteProduct(id) {
   fetch("https://fark618.onrender.com/products/" + id, {
