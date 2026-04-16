@@ -14,6 +14,16 @@
       margin-top: 20px;
     }
 
+    #cart {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: black;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+
     #products {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -48,10 +58,11 @@
 
   <h1>FARK 618 Store 🛍️</h1>
 
-  <div id="products">Loading...</div>
+  <div id="cart">Cart: 0</div>
+
+  <div id="products"></div>
 
   <script>
-    // Static product data (no backend needed)
     const data = [
       { name: "Blue Shirt", price: 799 },
       { name: "Black T-Shirt", price: 499 },
@@ -59,16 +70,30 @@
       { name: "Grey Hoodie", price: 1299 }
     ];
 
+    let cartCount = 0;
+
+    function addToCart() {
+      cartCount++;
+      document.getElementById("cart").innerText = "Cart: " + cartCount;
+    }
+
     let html = "";
 
-    data.forEach(p => {
+    data.forEach((p, i) => {
       html += `
         <div class="card">
           <h3>${p.name}</h3>
           <p class="price">₹${p.price}</p>
-          <button>Add to Cart</button>
+          <button onclick="addToCart()">Add to Cart</button>
         </div>
       `;
+    });
+
+    document.getElementById("products").innerHTML = html;
+  </script>
+
+</body>
+</html>      `;
     });
 
     document.getElementById("products").innerHTML = html;
