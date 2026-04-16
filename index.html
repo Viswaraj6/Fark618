@@ -71,15 +71,19 @@ fetch("https://fark618.onrender.com/products")
 
     let html = "";
 
-    data.forEach(p => {
-      html += `
-        <div class="card">
-          <h3>${p.name}</h3>
-          <p>₹${p.price}</p>
-          <button onclick="addToCart()">Add to Cart</button>
-        </div>
-      `;
-    });
+   data.forEach(p => {
+  html += `
+    <div class="card">
+      <img src="${p.image}" width="100%">
+      <h3>${p.name}</h3>
+      <p>₹${p.price}</p>
+      <p>Stock: ${p.stock}</p>
+      <button ${p.stock == 0 ? "disabled" : ""} onclick="addToCart()">
+        ${p.stock == 0 ? "Out of Stock" : "Add to Cart"}
+      </button>
+    </div>
+  `;
+});
 
     document.getElementById("products").innerHTML = html;
 
