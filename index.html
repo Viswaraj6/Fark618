@@ -76,46 +76,15 @@
 <script>
 
 let cartCount = 0;
+let productsData = []; // ⭐ important
 
-// 🛒 Add to Cart + Reduce Stock
-function addToCart(id) {
-
-  fetch("https://fark618.onrender.com/products/" + id)
-  .then(res => res.json())
-  .then(product => {
-
-    if (product.stock <= 0) {
-      alert("Out of stock ❌");
-      return;
-    }
-
-    cartCount++;
-    document.getElementById("cart").innerText = "Cart: " + cartCount;
-
-    // update stock
-    fetch("https://fark618.onrender.com/products/" + id, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: product.name,
-        price: product.price,
-        stock: product.stock - 1,
-        image: product.image
-      })
-    })
-    .then(() => location.reload());
-
-  });
-}
-
-
-// 🔥 Load Products
+// 🔥 Load products
 function loadProducts() {
   fetch("https://fark618.onrender.com/products")
   .then(res => res.json())
   .then(data => {
+
+    productsData = data; // store locally
 
     let html = "";
 
@@ -145,7 +114,46 @@ function loadProducts() {
   });
 }
 
-// load first time
+
+// 🛒 Add to cart + reduce stock
+function addToCart(id) {
+
+  const product = productsData.find(p => p.id == id);
+
+  if (!product) {
+    alert("Product not found ❌");
+    return;
+  }
+
+  if (product.stock <= 0) {
+    alert("Out of stock ❌");
+    return;
+  }
+
+  // cart count update
+  cartCount++;
+  document.getElementById("cart").innerText = "Cart: " + cartCount;
+
+  // update stock in backend
+  fetch("https://fark618.onrender.com/products/" + id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: product.name,
+      price: product.price,
+      stock: product.stock - 1,
+      image: product.image
+    })
+  })
+  .then(() => {
+    loadProducts(); // refresh UI without reload
+  });
+}
+
+
+// first load
 loadProducts();
 
 </script>
