@@ -127,16 +127,20 @@
       let html = "";
 
       data.forEach(p => {
-        html += `
-          <div class="card">
-            <img src="${p.image}" />
-            <h3>${p.name}</h3>
-            <p>₹${p.price}</p>
-            <p>Stock: ${p.stock}</p>
-            <button onclick="addToCart()">Add to Cart</button>
-          </div>
-        `;
-      });
+  html += `
+    <div class="card">
+      <img src="${p.image}" />
+      <h3>${p.name}</h3>
+      <p>₹${p.price}</p>
+      <p>Stock: ${p.stock}</p>
+
+      <button onclick="addToCart()">Add to Cart</button>
+      <br>
+      <button onclick="deleteProduct(${p.id})">Delete</button>
+      <button onclick="editProduct(${p.id})">Edit</button>
+    </div>
+  `;
+});
 
       document.getElementById("products").innerHTML = html;
     })
