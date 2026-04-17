@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(cors());
 
 // 🔴 MongoDB Connection (IMPORTANT: replace password if needed)
-mongoose.connect(mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/?appName=Cluster0)
+mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/?appName=Cluster0")
 .then(() => console.log("MongoDB Connected ✅"))
 .catch(err => console.log(err));
 
