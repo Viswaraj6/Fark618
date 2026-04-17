@@ -60,6 +60,14 @@
 
 <body>
 
+<!-- ✅ USER SET (IMPORTANT) -->
+<script>
+if (!localStorage.getItem("user")) {
+  const username = prompt("Enter your name:");
+  localStorage.setItem("user", username || "guest");
+}
+</script>
+
 <div id="cart" onclick="goToCart()">Cart: 0</div>
 
 <h1>FARK 618 🛍️</h1>
@@ -71,8 +79,12 @@
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let productsData = [];
 
-// cart count update
-document.getElementById("cart").innerText = "Cart: " + cart.length;
+// cart count
+function updateCartUI() {
+  document.getElementById("cart").innerText = "Cart: " + cart.length;
+}
+
+updateCartUI();
 
 // load products
 function loadProducts() {
@@ -102,7 +114,11 @@ function loadProducts() {
 
     document.getElementById("products").innerHTML = html;
   })
-  .catch(err => console.log("ERROR:", err));
+  .catch(err => {
+    console.log("ERROR:", err);
+    document.getElementById("products").innerHTML =
+      "<p>Failed to load products ❌</p>";
+  });
 }
 
 // add to cart
@@ -126,8 +142,9 @@ function addToCart(id) {
 
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  document.getElementById("cart").innerText = "Cart: " + cart.length;
+  updateCartUI();
 
+  // update stock
   fetch("https://fark618-1.onrender.com/products/" + id, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -146,7 +163,7 @@ function goToCart() {
   window.location.href = "cart.html";
 }
 
-// run
+// start
 loadProducts();
 
 </script>
