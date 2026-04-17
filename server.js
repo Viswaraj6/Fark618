@@ -6,10 +6,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ MongoDB Connection
-mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/?retryWrites=true&w=majority")
+// ✅ MongoDB Connection (FIXED)
+mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/fark618?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected ✅"))
-.catch(err => console.log(err));
+.catch(err => console.log("Mongo Error:", err));
 
 // 📦 Product Schema
 const Product = mongoose.model("Product", {
@@ -27,32 +27,49 @@ const Order = mongoose.model("Order", {
 
 // ➕ Add Product
 app.post("/add-product", async (req, res) => {
-  const product = new Product(req.body);
-  await product.save();
-  res.send("Product Added ✅");
+  try {
+    const product = new Product(req.body);
+    await product.save();
+    res.send("Product Added ✅");
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // 📥 Get Products
 app.get("/products", async (req, res) => {
-  const data = await Product.find();
-  res.json(data);
+  try {
+    const data = await Product.find();
+    res.json(data);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // 🛒 Place Order
 app.post("/order", async (req, res) => {
-  const order = new Order(req.body);
-  await order.save();
-  res.send("Order Placed ✅");
+  try {
+    const order = new Order(req.body);
+    await order.save();
+    res.send("Order Placed ✅");
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // 📦 Get Orders
 app.get("/orders", async (req, res) => {
-  const data = await Order.find();
-  res.json(data);
+  try {
+    const data = await Order.find();
+    res.json(data);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-// 🚀 Server Start (IMPORTANT for Render)
+// ✅ IMPORTANT (Render port fix)
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log("Server running 🚀");
+  console.log("Server running on port " + PORT);
 });
