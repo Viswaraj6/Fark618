@@ -48,7 +48,9 @@ function loadOrders() {
 
       let html = "";
 
-      data.forEach(o => {
+      data
+  .filter(o => o.user === user)
+  .forEach(o => {
 
         html += `
           <div class="card">
