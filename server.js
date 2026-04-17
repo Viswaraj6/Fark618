@@ -4,14 +4,14 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
 
-// ✅ MongoDB Connect (SAFE + DEBUG)
+// 🔥 CORS (frontend connect fix)
+app.use(cors({
+  origin: "*"
+}));
+
+// ✅ MongoDB Connect
 const MONGO_URL = process.env.MONGO_URL;
-
-if (!MONGO_URL) {
-  console.log("❌ MONGO_URL not found in ENV");
-}
 
 mongoose.connect(MONGO_URL)
   .then(() => console.log("MongoDB Connected ✅"))
@@ -47,19 +47,17 @@ app.post("/add-product", async (req, res) => {
     await product.save();
     res.json(product);
   } catch (err) {
-    console.log(err);
     res.status(500).send("Error adding product");
   }
 });
 
 
-// 📥 GET PRODUCTS
+// 📥 GET PRODUCTS (IMPORTANT)
 app.get("/products", async (req, res) => {
   try {
     const data = await Product.find();
     res.json(data);
   } catch (err) {
-    console.log(err);
     res.status(500).send("Error fetching products");
   }
 });
