@@ -63,7 +63,7 @@ let productsData = [];
 document.getElementById("cart").innerText = "Cart: " + cart.length;
 
 function loadProducts() {
-  fetch("https://fark618.onrender.com/products")
+  fetch("https://fark618-1.onrender.com/products")
   .then(res => res.json())
   .then(data => {
 
@@ -74,7 +74,7 @@ function loadProducts() {
     data.forEach(p => {
       html += `
         <div class="card">
-          <img src="${p.image}">
+          <img src="${p.image || 'https://via.placeholder.com/200'}">
           <h3>${p.name}</h3>
           <p>₹${p.price}</p>
           <p>Stock: ${p.stock}</p>
@@ -88,6 +88,9 @@ function loadProducts() {
     });
 
     document.getElementById("products").innerHTML = html;
+  })
+  .catch(err => {
+    console.log("ERROR:", err);
   });
 }
 
@@ -95,29 +98,25 @@ function addToCart(id) {
 
   const product = productsData.find(p => p._id == id);
 
-  if (!product) {
-    alert("Product not found ❌");
-    return;
-  }
+  if (!product) return;
 
   if (product.stock <= 0) {
     alert("Out of stock ❌");
     return;
   }
 
-  const cartItem = {
+  cart.push({
     id: product._id,
     name: product.name,
     price: product.price,
     image: product.image
-  };
+  });
 
-  cart.push(cartItem);
   localStorage.setItem("cart", JSON.stringify(cart));
 
   document.getElementById("cart").innerText = "Cart: " + cart.length;
 
-  fetch("https://fark618.onrender.com/products/" + id, {
+  fetch("https://fark618-1.onrender.com/products/" + id, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
