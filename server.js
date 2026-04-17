@@ -6,10 +6,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ MongoDB Connect
-mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/fark618?retryWrites=true&w=majority")
+// ✅ MongoDB Connect (FIXED)
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 .then(() => console.log("MongoDB Connected ✅"))
-.catch(err => console.log(err));
+.catch(err => console.log("Mongo Error ❌", err));
 
 
 // 📦 Product Schema
@@ -31,28 +34,24 @@ const Order = mongoose.model("Order", {
 // ➕ ADD PRODUCT
 app.post("/add-product", async (req, res) => {
   try {
-    const product = new Product({
-      name: req.body.name,
-      price: Number(req.body.price),
-      stock: Number(req.body.stock),
-      image: req.body.image
-    });
-
+    const product = new Product(req.body);
     await product.save();
-    res.json(product);
+    res.json({ message: "Product Added ✅", product });
   } catch (err) {
-    res.status(500).send(err);
+    console.log(err);
+    res.status(500).send("Error adding product");
   }
 });
 
 
-// 📥 GET PRODUCTS (ONLY ONE!)
+// 📥 GET PRODUCTS
 app.get("/products", async (req, res) => {
   try {
     const data = await Product.find();
-    res.json(data); // ✅ IMPORTANT
+    res.json(data || []);
   } catch (err) {
-    res.status(500).send(err);
+    console.log(err);
+    res.status(500).send("Error fetching products");
   }
 });
 
@@ -95,14 +94,14 @@ app.post("/order", async (req, res) => {
 app.get("/orders", async (req, res) => {
   try {
     const data = await Order.find();
-    res.json(data);
+    res.json(data || []);
   } catch (err) {
     res.status(500).send(err);
   }
 });
 
 
-// 🟢 ROOT FIX (IMPORTANT)
+// 🟢 ROOT
 app.get("/", (req, res) => {
   res.send("FARK618 API Running 🚀");
 });
