@@ -6,15 +6,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ ROOT (IMPORTANT)
-app.get("/", (req, res) => {
-  res.send("API Running 🚀");
-});
-
-// ✅ MongoDB Connection
+// ✅ MongoDB Connect
 mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/fark618?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected ✅"))
-.catch(err => console.log("Mongo Error:", err));
+.catch(err => console.log(err));
+
 
 // 📦 Product Schema
 const Product = mongoose.model("Product", {
@@ -31,15 +27,10 @@ const Order = mongoose.model("Order", {
   date: { type: Date, default: Date.now }
 });
 
+
 // ➕ ADD PRODUCT
 app.post("/add-product", async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-
-    if (!req.body.name) {
-      return res.send("No data received ❌");
-    }
-
     const product = new Product({
       name: req.body.name,
       price: Number(req.body.price),
@@ -47,45 +38,37 @@ app.post("/add-product", async (req, res) => {
       image: req.body.image
     });
 
-    const saved = await product.save();
-
-    console.log("SAVED:", saved);
-
-    res.json(saved);
+    await product.save();
+    res.json(product);
   } catch (err) {
-    console.log("ERROR:", err);
     res.status(500).send(err);
   }
 });
 
-// 📥 GET PRODUCTS
+
+// 📥 GET PRODUCTS (ONLY ONE!)
 app.get("/products", async (req, res) => {
   try {
     const data = await Product.find();
-    console.log("PRODUCTS:", data);
-    res.json(data);
+    res.json(data); // ✅ IMPORTANT
   } catch (err) {
-    console.log(err);
     res.status(500).send(err);
   }
 });
 
-// ✏️ UPDATE PRODUCT
+
+// ✏️ UPDATE
 app.put("/products/:id", async (req, res) => {
   try {
-    await Product.findByIdAndUpdate(req.params.id, {
-      name: req.body.name,
-      price: Number(req.body.price),
-      stock: Number(req.body.stock),
-      image: req.body.image
-    });
+    await Product.findByIdAndUpdate(req.params.id, req.body);
     res.send("Updated ✅");
   } catch (err) {
     res.status(500).send(err);
   }
 });
 
-// ❌ DELETE PRODUCT
+
+// ❌ DELETE
 app.delete("/products/:id", async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
@@ -95,7 +78,8 @@ app.delete("/products/:id", async (req, res) => {
   }
 });
 
-// 🛒 PLACE ORDER
+
+// 🛒 ORDER
 app.post("/order", async (req, res) => {
   try {
     const order = new Order(req.body);
@@ -105,6 +89,7 @@ app.post("/order", async (req, res) => {
     res.status(500).send(err);
   }
 });
+
 
 // 📦 GET ORDERS
 app.get("/orders", async (req, res) => {
@@ -116,9 +101,15 @@ app.get("/orders", async (req, res) => {
   }
 });
 
-// 🚀 SERVER START
-const PORT = process.env.PORT || 5000;
 
+// 🟢 ROOT FIX (IMPORTANT)
+app.get("/", (req, res) => {
+  res.send("FARK618 API Running 🚀");
+});
+
+
+// 🚀 START
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });
