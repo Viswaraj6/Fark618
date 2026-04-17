@@ -6,6 +6,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// ✅ ROOT (IMPORTANT)
+app.get("/", (req, res) => {
+  res.send("API Running 🚀");
+});
+
 // ✅ MongoDB Connection
 mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/fark618?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected ✅"))
@@ -29,7 +34,11 @@ const Order = mongoose.model("Order", {
 // ➕ ADD PRODUCT
 app.post("/add-product", async (req, res) => {
   try {
-    console.log("BODY:", req.body); // 🔥 check
+    console.log("BODY:", req.body);
+
+    if (!req.body.name) {
+      return res.send("No data received ❌");
+    }
 
     const product = new Product({
       name: req.body.name,
@@ -40,7 +49,7 @@ app.post("/add-product", async (req, res) => {
 
     const saved = await product.save();
 
-    console.log("SAVED:", saved); // 🔥 check
+    console.log("SAVED:", saved);
 
     res.json(saved);
   } catch (err) {
@@ -53,7 +62,7 @@ app.post("/add-product", async (req, res) => {
 app.get("/products", async (req, res) => {
   try {
     const data = await Product.find();
-    console.log("DB DATA:", data); // 🔥 check
+    console.log("PRODUCTS:", data);
     res.json(data);
   } catch (err) {
     console.log(err);
@@ -61,17 +70,22 @@ app.get("/products", async (req, res) => {
   }
 });
 
-// ✏️ UPDATE
+// ✏️ UPDATE PRODUCT
 app.put("/products/:id", async (req, res) => {
   try {
-    await Product.findByIdAndUpdate(req.params.id, req.body);
+    await Product.findByIdAndUpdate(req.params.id, {
+      name: req.body.name,
+      price: Number(req.body.price),
+      stock: Number(req.body.stock),
+      image: req.body.image
+    });
     res.send("Updated ✅");
   } catch (err) {
     res.status(500).send(err);
   }
 });
 
-// ❌ DELETE
+// ❌ DELETE PRODUCT
 app.delete("/products/:id", async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
@@ -81,7 +95,7 @@ app.delete("/products/:id", async (req, res) => {
   }
 });
 
-// 🛒 ORDER
+// 🛒 PLACE ORDER
 app.post("/order", async (req, res) => {
   try {
     const order = new Order(req.body);
@@ -102,7 +116,7 @@ app.get("/orders", async (req, res) => {
   }
 });
 
-// 🚀 START
+// 🚀 SERVER START
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
