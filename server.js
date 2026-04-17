@@ -6,13 +6,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ MongoDB Connect (ENV பயன்படுத்துறோம்)
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB Connected ✅"))
-.catch(err => console.log("Mongo Error ❌", err));
+// ✅ MongoDB Connect (SAFE + DEBUG)
+const MONGO_URL = process.env.MONGO_URL;
+
+if (!MONGO_URL) {
+  console.log("❌ MONGO_URL not found in ENV");
+}
+
+mongoose.connect(MONGO_URL)
+  .then(() => console.log("MongoDB Connected ✅"))
+  .catch(err => console.log("Mongo Error ❌", err));
 
 
 // 📦 Product Schema
@@ -40,24 +43,12 @@ app.get("/", (req, res) => {
 // ➕ ADD PRODUCT
 app.post("/add-product", async (req, res) => {
   try {
-    const product = new Product({
-      name: req.body.name,
-      price: Number(req.body.price),
-      stock: Number(req.body.stock),
-      image: req.body.image
-    });
-
+    const product = new Product(req.body);
     await product.save();
-
-    res.json({
-      success: true,
-      message: "Product Added ✅",
-      product
-    });
-
+    res.json(product);
   } catch (err) {
-    console.log("Add Error:", err);
-    res.status(500).json({ success: false, error: err });
+    console.log(err);
+    res.status(500).send("Error adding product");
   }
 });
 
@@ -66,54 +57,44 @@ app.post("/add-product", async (req, res) => {
 app.get("/products", async (req, res) => {
   try {
     const data = await Product.find();
-
-    res.json(data || []);
-
+    res.json(data);
   } catch (err) {
-    console.log("Fetch Error:", err);
+    console.log(err);
     res.status(500).send("Error fetching products");
   }
 });
 
 
-// ✏️ UPDATE PRODUCT
+// ✏️ UPDATE
 app.put("/products/:id", async (req, res) => {
   try {
     await Product.findByIdAndUpdate(req.params.id, req.body);
     res.send("Updated ✅");
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    res.status(500).send("Error updating");
   }
 });
 
 
-// ❌ DELETE PRODUCT
+// ❌ DELETE
 app.delete("/products/:id", async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.send("Deleted ✅");
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    res.status(500).send("Error deleting");
   }
 });
 
 
-// 🛒 PLACE ORDER
+// 🛒 ORDER
 app.post("/order", async (req, res) => {
   try {
     const order = new Order(req.body);
     await order.save();
-
-    res.json({
-      success: true,
-      message: "Order Placed ✅"
-    });
-
+    res.send("Order placed ✅");
   } catch (err) {
-    console.log("Order Error:", err);
-    res.status(500).send(err);
+    res.status(500).send("Error placing order");
   }
 });
 
@@ -122,17 +103,15 @@ app.post("/order", async (req, res) => {
 app.get("/orders", async (req, res) => {
   try {
     const data = await Order.find();
-    res.json(data || []);
+    res.json(data);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    res.status(500).send("Error fetching orders");
   }
 });
 
 
-// 🚀 START SERVER
+// 🚀 START
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });
