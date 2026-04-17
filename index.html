@@ -36,9 +36,22 @@
       cursor: pointer;
     }
 
+    /* 🔥 My Account */
+    #account {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      background: green;
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
     #welcome {
       text-align: center;
       margin-bottom: 10px;
+      font-weight: bold;
     }
 
     .products {
@@ -66,10 +79,15 @@
       padding: 10px;
       border: none;
       margin-top: 10px;
+      cursor: pointer;
     }
 
     button:disabled {
       background: grey;
+    }
+
+    .fav-btn {
+      background: orange;
     }
   </style>
 </head>
@@ -86,9 +104,13 @@ if (!localStorage.getItem("user")) {
 <!-- 🔴 Logout -->
 <div id="logout" onclick="logout()">Logout</div>
 
+<!-- 🟢 My Account -->
+<div id="account" onclick="goToAccount()">My Account 👤</div>
+
 <!-- 👤 Welcome -->
 <h3 id="welcome"></h3>
 
+<!-- 🛒 Cart -->
 <div id="cart" onclick="goToCart()">Cart: 0</div>
 
 <h1>FARK 618 🛍️</h1>
@@ -104,20 +126,20 @@ let productsData = [];
 document.getElementById("welcome").innerText =
   "Welcome, " + localStorage.getItem("user");
 
-// logout
+// 🔴 logout
 function logout() {
   localStorage.removeItem("user");
   window.location.href = "login.html";
 }
 
-// cart count update
+// 🛒 cart UI update
 function updateCartUI() {
   document.getElementById("cart").innerText = "Cart: " + cart.length;
 }
 
 updateCartUI();
 
-// load products
+// 📦 load products
 function loadProducts() {
   fetch("https://fark618-1.onrender.com/products")
   .then(res => res.json())
@@ -139,6 +161,10 @@ function loadProducts() {
             ${p.stock == 0 ? "disabled" : ""}>
             ${p.stock == 0 ? "Out of Stock" : "Add to Cart"}
           </button>
+
+          <button class="fav-btn" onclick="addToFav('${p._id}')">
+            ❤️ Favorite
+          </button>
         </div>
       `;
     });
@@ -152,7 +178,7 @@ function loadProducts() {
   });
 }
 
-// add to cart
+// ➕ add to cart
 function addToCart(id) {
 
   const product = productsData.find(p => p._id == id);
@@ -175,7 +201,7 @@ function addToCart(id) {
 
   updateCartUI();
 
-  // update stock
+  // 🔄 update stock
   fetch("https://fark618-1.onrender.com/products/" + id, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -189,12 +215,35 @@ function addToCart(id) {
   .then(() => loadProducts());
 }
 
-// go to cart
+// ❤️ add to favorite
+function addToFav(id) {
+
+  const product = productsData.find(p => p._id == id);
+
+  let fav = JSON.parse(localStorage.getItem("fav")) || [];
+
+  fav.push({
+    id: product._id,
+    name: product.name,
+    price: product.price
+  });
+
+  localStorage.setItem("fav", JSON.stringify(fav));
+
+  alert("Added to Favorites ❤️");
+}
+
+// 🛒 go to cart
 function goToCart() {
   window.location.href = "cart.html";
 }
 
-// start
+// 👤 go to account
+function goToAccount() {
+  window.location.href = "account.html";
+}
+
+// 🚀 start
 loadProducts();
 
 </script>
