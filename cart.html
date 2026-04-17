@@ -96,9 +96,9 @@ function placeOrder() {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      products: cart,   // ✅ correct key
-      total: total
-    })
+  products: cart, // 🔥 IMPORTANT change
+  total: total
+})
   })
   .then(() => {
     alert("Order placed successfully ✅");
