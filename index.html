@@ -36,7 +36,7 @@
       cursor: pointer;
     }
 
-    /* 🔥 My Account */
+    /* ✅ My Account */
     #account {
       position: fixed;
       top: 70px;
@@ -122,7 +122,7 @@ if (!localStorage.getItem("user")) {
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let productsData = [];
 
-// 👤 show username
+// 👤 username
 document.getElementById("welcome").innerText =
   "Welcome, " + localStorage.getItem("user");
 
@@ -132,11 +132,10 @@ function logout() {
   window.location.href = "login.html";
 }
 
-// 🛒 cart UI update
+// 🛒 cart update
 function updateCartUI() {
   document.getElementById("cart").innerText = "Cart: " + cart.length;
 }
-
 updateCartUI();
 
 // 📦 load products
@@ -172,7 +171,7 @@ function loadProducts() {
     document.getElementById("products").innerHTML = html;
   })
   .catch(err => {
-    console.log("ERROR:", err);
+    console.log(err);
     document.getElementById("products").innerHTML =
       "<p>Failed to load products ❌</p>";
   });
@@ -201,7 +200,6 @@ function addToCart(id) {
 
   updateCartUI();
 
-  // 🔄 update stock
   fetch("https://fark618-1.onrender.com/products/" + id, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -233,12 +231,12 @@ function addToFav(id) {
   alert("Added to Favorites ❤️");
 }
 
-// 🛒 go to cart
+// 🛒 cart page
 function goToCart() {
   window.location.href = "cart.html";
 }
 
-// 👤 go to account
+// 👤 account page
 function goToAccount() {
   window.location.href = "account.html";
 }
