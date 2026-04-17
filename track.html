@@ -4,7 +4,6 @@
 <head>
   <title>Track Order</title>
 
-  <!-- 🔥 இங்க paste பண்ணு -->
   <style>
     body {
       font-family: Arial;
@@ -34,7 +33,7 @@
       border-radius: 10px;
     }
 
-    /* 🔥 Timeline CSS இங்க */
+    /* 🔥 Timeline */
     .timeline {
       display: flex;
       justify-content: space-between;
@@ -76,3 +75,78 @@
   </style>
 
 </head>
+
+<body>
+
+<h1>📦 Track Your Order</h1>
+
+<input id="orderId" placeholder="Enter Order ID">
+<br>
+<button onclick="trackOrder()">Track</button>
+
+<div id="result"></div>
+
+<script>
+
+const BASE_URL = "https://fark618-1.onrender.com";
+
+function trackOrder() {
+
+  const id = document.getElementById("orderId").value;
+
+  if (!id) {
+    alert("Enter Order ID ❌");
+    return;
+  }
+
+  fetch(BASE_URL + "/orders")
+    .then(res => res.json())
+    .then(data => {
+
+      const order = data.find(o => o._id === id);
+
+      if (!order) {
+        document.getElementById("result").innerHTML =
+          "<p>Order not found ❌</p>";
+        return;
+      }
+
+      // 🔥 Timeline steps
+      const statusSteps = ["Pending", "Shipped", "Delivered"];
+
+      let stepsHtml = "";
+
+      statusSteps.forEach(step => {
+        const active = statusSteps.indexOf(step) <= statusSteps.indexOf(order.status);
+
+        stepsHtml += `
+          <div class="step">
+            <div class="circle ${active ? "active" : ""}"></div>
+            <p>${step}</p>
+          </div>
+        `;
+      });
+
+      // 🔥 Render result
+      document.getElementById("result").innerHTML = `
+        <div class="card">
+          <h2>Order Tracking 📦</h2>
+          <p><b>Order ID:</b> ${order._id}</p>
+          <p><b>Total:</b> ₹${order.total}</p>
+
+          <div class="timeline">
+            ${stepsHtml}
+          </div>
+        </div>
+      `;
+    })
+    .catch(err => {
+      console.log(err);
+      alert("Error loading order ❌");
+    });
+}
+
+</script>
+
+</body>
+</html>
