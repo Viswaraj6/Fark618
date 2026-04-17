@@ -1,77 +1,58 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-// 📦 PRODUCTS
-let products = [
-  {
-    id: 1,
-    name: "Blue Shirt",
-    price: 799,
-    stock: 10,
-    image: "https://via.placeholder.com/300"
-  }
-];
+// 🔴 MongoDB Connection (IMPORTANT: replace password if needed)
+mongoose.connect("YOUR_MONGODB_URL_HERE")
+.then(() => console.log("MongoDB Connected ✅"))
+.catch(err => console.log(err));
 
-// 📦 ORDERS
-let orders = [];
-
-// ================= PRODUCTS =================
-
-// GET all products
-app.get("/products", (req, res) => {
-  res.json(products);
+// 📦 Product Schema
+const Product = mongoose.model("Product", {
+  name: String,
+  price: Number,
+  image: String
 });
 
-// ADD product
-app.post("/products", (req, res) => {
-  const newProduct = { id: Date.now(), ...req.body };
-  products.push(newProduct);
-  res.json(newProduct);
+// 🧾 Order Schema
+const Order = mongoose.model("Order", {
+  products: Array,
+  total: Number,
+  date: { type: Date, default: Date.now }
 });
 
-// UPDATE product
-app.put("/products/:id", (req, res) => {
-  const id = Number(req.params.id);
 
-  products = products.map(p =>
-    p.id === id ? { ...p, ...req.body } : p
-  );
-
-  res.json({ message: "Updated" });
+// ➕ Add Product
+app.post("/add-product", async (req, res) => {
+  const product = new Product(req.body);
+  await product.save();
+  res.send("Product Added ✅");
 });
 
-// DELETE product
-app.delete("/products/:id", (req, res) => {
-  const id = Number(req.params.id);
-
-  products = products.filter(p => p.id !== id);
-
-  res.json({ message: "Deleted" });
+// 📥 Get Products
+app.get("/products", async (req, res) => {
+  const data = await Product.find();
+  res.json(data);
 });
 
-// ================= ORDERS =================
-
-// SAVE order
-app.post("/orders", (req, res) => {
-  const newOrder = {
-    id: Date.now(),
-    items: req.body.items,
-    total: req.body.total
-  };
-
-  orders.push(newOrder);
-  res.json({ message: "Order placed" });
+// 🛒 Place Order
+app.post("/order", async (req, res) => {
+  const order = new Order(req.body);
+  await order.save();
+  res.send("Order Placed ✅");
 });
 
-// GET all orders
-app.get("/orders", (req, res) => {
-  res.json(orders);
+// 📦 Get Orders
+app.get("/orders", async (req, res) => {
+  const data = await Order.find();
+  res.json(data);
 });
 
-// ================= SERVER =================
-
-app.listen(3000, () => console.log("Server running"));
+// 🚀 Server Start
+app.listen(5000, () => {
+  console.log("Server running on port 5000 🚀");
+});
