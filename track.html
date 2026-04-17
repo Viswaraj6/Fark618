@@ -36,8 +36,9 @@
     /* 🔥 Timeline */
     .timeline {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      margin-top: 20px;
+      margin-top: 30px;
     }
 
     .step {
@@ -46,18 +47,19 @@
       position: relative;
     }
 
-    .step::before {
+    /* 👉 Arrow / line */
+    .step::after {
       content: "";
       position: absolute;
       top: 15px;
-      left: -50%;
+      left: 50%;
       width: 100%;
       height: 4px;
       background: #ccc;
       z-index: -1;
     }
 
-    .step:first-child::before {
+    .step:last-child::after {
       display: none;
     }
 
@@ -67,9 +69,17 @@
       border-radius: 50%;
       background: #ccc;
       margin: auto;
+      position: relative;
+      z-index: 2;
     }
 
+    /* ✅ Active dot */
     .active {
+      background: green !important;
+    }
+
+    /* ✅ Active line */
+    .active-line::after {
       background: green !important;
     }
   </style>
@@ -111,23 +121,23 @@ function trackOrder() {
         return;
       }
 
-      // 🔥 Timeline steps
       const statusSteps = ["Pending", "Shipped", "Delivered"];
 
       let stepsHtml = "";
 
       statusSteps.forEach(step => {
-        const active = statusSteps.indexOf(step) <= statusSteps.indexOf(order.status);
+
+        const active =
+          statusSteps.indexOf(step) <= statusSteps.indexOf(order.status);
 
         stepsHtml += `
-          <div class="step">
+          <div class="step ${active ? "active-line" : ""}">
             <div class="circle ${active ? "active" : ""}"></div>
             <p>${step}</p>
           </div>
         `;
       });
 
-      // 🔥 Render result
       document.getElementById("result").innerHTML = `
         <div class="card">
           <h2>Order Tracking 📦</h2>
