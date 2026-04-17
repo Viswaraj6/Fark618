@@ -44,10 +44,8 @@
 <h1>🛒 Your Cart</h1>
 
 <div id="cartItems"></div>
-
 <h2 id="total"></h2>
 
-<!-- ✅ Place Order button (இங்க தான் add பண்ணணும்) -->
 <button class="order-btn" onclick="placeOrder()">Place Order</button>
 
 <script>
@@ -60,8 +58,7 @@ function loadCart() {
   let total = 0;
 
   cart.forEach((item, index) => {
-
-    total += Number(item.price); // ✅ இங்க தான் change
+    total += Number(item.price || 0);
 
     html += `
       <div class="item">
@@ -75,14 +72,14 @@ function loadCart() {
   document.getElementById("cartItems").innerHTML = html;
   document.getElementById("total").innerText = "Total: ₹" + total;
 }
-// ❌ Remove item
+
 function removeItem(index) {
   cart.splice(index, 1);
   localStorage.setItem("cart", JSON.stringify(cart));
   loadCart();
 }
 
-// 🛒 Place Order (இங்க தான் function add பண்ணணும்)
+// ✅ FIXED ORDER FUNCTION
 function placeOrder() {
 
   if (cart.length === 0) {
@@ -90,29 +87,27 @@ function placeOrder() {
     return;
   }
 
-  let total = 0; // ✅ declare
+  let total = 0;
+  cart.forEach(item => total += Number(item.price || 0));
 
-  cart.forEach(item => {
-    total += Number(item.price || 0); // ✅ correct
-  });
-
-  fetch("https://fark618.onrender.com/orders", {
+  fetch("https://fark618-1.onrender.com/order", {   // ✅ correct URL
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      items: cart,
+      products: cart,   // ✅ correct key
       total: total
     })
   })
   .then(() => {
     alert("Order placed successfully ✅");
     localStorage.removeItem("cart");
-    location.reload();
-  });
+    window.location.href = "/";
+  })
+  .catch(err => console.log(err));
 }
-// initial load
+
 loadCart();
 
 </script>
