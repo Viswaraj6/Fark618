@@ -83,7 +83,7 @@ function login() {
     document.getElementById("adminPanel").style.display = "block";
 
     loadProducts();
-    loadOrders(); // ⭐ IMPORTANT
+    loadOrders();
   } else {
     alert("Wrong login!");
   }
@@ -109,9 +109,9 @@ function addProduct() {
   });
 }
 
-// 📦 LOAD PRODUCTS
+// 📦 LOAD PRODUCTS (FIXED)
 function loadProducts() {
-fetch("https://fark618.onrender.com/add-product", {
+  fetch("https://fark618.onrender.com/products")
     .then(res => res.json())
     .then(data => {
 
@@ -125,8 +125,8 @@ fetch("https://fark618.onrender.com/add-product", {
             <p>₹${p.price}</p>
             <p>Stock: ${p.stock}</p>
 
-            <button onclick="deleteProduct(${p.id})">Delete</button>
-            <button onclick="editProduct(${p.id})">Edit</button>
+            <button onclick="deleteProduct('${p._id}')">Delete</button>
+            <button onclick="editProduct('${p._id}')">Edit</button>
           </div>
         `;
       });
@@ -135,7 +135,7 @@ fetch("https://fark618.onrender.com/add-product", {
     });
 }
 
-// 📦 LOAD ORDERS (NEW)
+// 📦 LOAD ORDERS (FIXED)
 function loadOrders() {
   fetch("https://fark618.onrender.com/orders")
     .then(res => res.json())
@@ -147,7 +147,7 @@ function loadOrders() {
 
         let grouped = {};
 
-        o.items.forEach(item => {
+        o.products.forEach(item => {
           if (!grouped[item.name]) {
             grouped[item.name] = { qty: 0, price: item.price };
           }
@@ -167,13 +167,10 @@ function loadOrders() {
 
         html += `
           <div class="card">
-            <h3>Order ID: ${o.id}</h3>
+            <h3>Order ID: ${o._id}</h3>
             <p><b>Total:</b> ₹${o.total}</p>
 
-            <p><b>Items:</b></p>
-            <ul>
-              ${itemsHtml}
-            </ul>
+            <ul>${itemsHtml}</ul>
           </div>
         `;
       });
@@ -181,7 +178,8 @@ function loadOrders() {
       document.getElementById("orders").innerHTML = html;
     });
 }
-// ✏️ EDIT
+
+// ✏️ EDIT (FIXED)
 function editProduct(id) {
   const name = prompt("New name:");
   const price = prompt("New price:");
@@ -197,6 +195,15 @@ function editProduct(id) {
   })
   .then(() => loadProducts());
 }
+
+// ❌ DELETE (NEW ADD)
+function deleteProduct(id) {
+  fetch("https://fark618.onrender.com/products/" + id, {
+    method: "DELETE"
+  })
+  .then(() => loadProducts());
+}
+
 
 </script>
 
