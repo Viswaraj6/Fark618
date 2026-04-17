@@ -72,8 +72,8 @@
 
 <script>
 
-// ✅ BACKEND URL (IMPORTANT)
-const API = "https://fark618-1.onrender.com";
+// ✅ CORRECT BACKEND URL
+const BASE_URL = "https://fark618-1.onrender.com";
 
 // 🔐 LOGIN
 function login() {
@@ -91,14 +91,14 @@ function login() {
   }
 }
 
-// ➕ ADD PRODUCT
+// ➕ ADD PRODUCT (FIXED + DEBUG)
 function addProduct() {
   const name = document.getElementById("name").value;
   const price = document.getElementById("price").value;
   const stock = document.getElementById("stock").value;
   const image = document.getElementById("image").value;
 
-  fetch(API + "/add-product", {
+  fetch(BASE_URL + "/add-product", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -106,19 +106,30 @@ function addProduct() {
     body: JSON.stringify({ name, price, stock, image })
   })
   .then(res => res.json())
-  .then(() => {
-    alert("Product Added!");
+  .then(data => {
+    console.log("Added:", data); // 🔥 debug
+    alert("Product Added ✅");
     loadProducts();
+  })
+  .catch(err => {
+    console.log(err);
+    alert("Error adding product ❌");
   });
 }
 
 // 📦 LOAD PRODUCTS
 function loadProducts() {
-  fetch(API + "/products")
+  fetch(BASE_URL + "/products")
     .then(res => res.json())
     .then(data => {
 
+      console.log("Products:", data); // 🔥 debug
+
       let html = "";
+
+      if (data.length === 0) {
+        html = "<p>No products found</p>";
+      }
 
       data.forEach(p => {
         html += `
@@ -135,12 +146,13 @@ function loadProducts() {
       });
 
       document.getElementById("products").innerHTML = html;
-    });
+    })
+    .catch(err => console.log(err));
 }
 
 // 📦 LOAD ORDERS
 function loadOrders() {
-  fetch(API + "/orders")
+  fetch(BASE_URL + "/orders")
     .then(res => res.json())
     .then(data => {
 
@@ -186,7 +198,7 @@ function editProduct(id) {
   const stock = prompt("New stock:");
   const image = prompt("New image URL:");
 
-  fetch(API + "/products/" + id, {
+  fetch(BASE_URL + "/products/" + id, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json"
@@ -198,7 +210,7 @@ function editProduct(id) {
 
 // ❌ DELETE
 function deleteProduct(id) {
-  fetch(API + "/products/" + id, {
+  fetch(BASE_URL + "/products/" + id, {
     method: "DELETE"
   })
   .then(() => loadProducts());
