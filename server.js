@@ -40,9 +40,9 @@ app.post("/add-product", async (req, res) => {
       image: req.body.image
     });
 
-    await product.save();
+await product.save();
 
-    res.send("Product Added ✅");
+res.json(product); // ✅ change pannunga
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
