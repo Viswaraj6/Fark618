@@ -100,22 +100,15 @@ app.post("/order", async (req, res) => {
   }
 });
 
-
-// 📦 GET ORDERS
-app.get("/products", async (req, res) => {
+// 📦 GET ORDERS ✅
+app.get("/orders", async (req, res) => {
   try {
-    const data = await Product.find();
-
-    console.log("Products from DB:", data); // 🔥 add this
-
+    const data = await Order.find();
     res.json(data);
   } catch (err) {
-    console.log(err);
     res.status(500).send(err);
   }
 });
-
-
 // 🚀 SERVER START
 const PORT = process.env.PORT || 5000;
 
