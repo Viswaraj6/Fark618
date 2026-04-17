@@ -30,9 +30,9 @@ const Product = mongoose.model("Product", {
 const Order = mongoose.model("Order", {
   products: Array,
   total: Number,
+  status: { type: String, default: "Pending" }, // 🔥 NEW
   date: { type: Date, default: Date.now }
 });
-
 
 // 🟢 ROOT
 app.get("/", (req, res) => {
