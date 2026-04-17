@@ -113,3 +113,14 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });
+// 🔄 UPDATE ORDER STATUS
+app.put("/orders/:id", async (req, res) => {
+  try {
+    await Order.findByIdAndUpdate(req.params.id, {
+      status: req.body.status
+    });
+    res.send("Order Updated ✅");
+  } catch (err) {
+    res.status(500).send("Error updating order");
+  }
+});
