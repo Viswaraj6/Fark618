@@ -95,9 +95,11 @@ function placeOrder() {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-  products: cart, // 🔥 IMPORTANT change
-  total: total
+body: JSON.stringify({
+  products: cart,
+  total: total,
+  user: localStorage.getItem("user") || "guest",
+  status: "Pending"
 })
   })
   .then(() => {
