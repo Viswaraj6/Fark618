@@ -55,17 +55,6 @@
     button:disabled {
       background: grey;
     }
-  </style>
-</head>
-
-<body>
-
-<div id="cart" onclick="goToCart()">Cart: 0</div>
-
-<h1>FARK 618 🛍️</h1>
-
-<div id="products" class="products"></div>
-
 <script>
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -73,7 +62,6 @@ let productsData = [];
 
 document.getElementById("cart").innerText = "Cart: " + cart.length;
 
-// Load products
 function loadProducts() {
   fetch("https://fark618.onrender.com/products")
   .then(res => res.json())
@@ -91,7 +79,7 @@ function loadProducts() {
           <p>₹${p.price}</p>
           <p>Stock: ${p.stock}</p>
 
-          <button onclick="addToCart(${p.id})"
+          <button onclick="addToCart('${p._id}')"
             ${p.stock == 0 ? "disabled" : ""}>
             ${p.stock == 0 ? "Out of Stock" : "Add to Cart"}
           </button>
@@ -103,19 +91,22 @@ function loadProducts() {
   });
 }
 
-// Add to cart
 function addToCart(id) {
 
-  const product = productsData.find(p => p.id == id);
+  const product = productsData.find(p => p._id == id);
+
+  if (!product) {
+    alert("Product not found ❌");
+    return;
+  }
 
   if (product.stock <= 0) {
     alert("Out of stock ❌");
     return;
   }
 
-  // 🔥 clean data மட்டும் cartல save
   const cartItem = {
-    id: product.id,
+    id: product._id,
     name: product.name,
     price: product.price,
     image: product.image
@@ -126,7 +117,6 @@ function addToCart(id) {
 
   document.getElementById("cart").innerText = "Cart: " + cart.length;
 
-  // 🔥 stock reduce backend
   fetch("https://fark618.onrender.com/products/" + id, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
