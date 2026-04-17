@@ -213,7 +213,19 @@ function deleteProduct(id) {
   })
   .then(() => loadProducts());
 }
-
+function updateStatus(id, status) {
+  fetch(BASE_URL + "/orders/" + id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ status })
+  })
+  .then(() => {
+    alert("Status updated ✅");
+    loadOrders();
+  });
+}
 </script>
 
 </body>
