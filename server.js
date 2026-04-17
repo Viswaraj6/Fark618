@@ -6,9 +6,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 🔴mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/?retryWrites=true&w=majority")
+// ✅ MongoDB Connection
+mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected ✅"))
 .catch(err => console.log(err));
+
 // 📦 Product Schema
 const Product = mongoose.model("Product", {
   name: String,
@@ -22,7 +24,6 @@ const Order = mongoose.model("Order", {
   total: Number,
   date: { type: Date, default: Date.now }
 });
-
 
 // ➕ Add Product
 app.post("/add-product", async (req, res) => {
@@ -50,7 +51,8 @@ app.get("/orders", async (req, res) => {
   res.json(data);
 });
 
-// 🚀 Server Start
-app.listen(5000, () => {
-  console.log("Server running on port 5000 🚀");
+// 🚀 Server Start (IMPORTANT for Render)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log("Server running 🚀");
 });
