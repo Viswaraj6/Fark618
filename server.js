@@ -6,11 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 🔴 MongoDB Connection (IMPORTANT: replace password if needed)
-mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/?retryWrites=true&w=majority")
+// 🔴mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jqyc9.mongodb.net/?retryWrites=true&w=majority")
 .then(() => console.log("MongoDB Connected ✅"))
 .catch(err => console.log(err));
-
 // 📦 Product Schema
 const Product = mongoose.model("Product", {
   name: String,
