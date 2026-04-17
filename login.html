@@ -1,42 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Login - FARK 618</title>
 
   <style>
     body {
       font-family: Arial;
-      text-align: center;
-      padding: 50px;
       background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-bottom: 20px;
     }
 
     input {
+      width: 90%;
       padding: 10px;
-      width: 250px;
-      margin: 10px;
+      margin: 10px 0;
     }
 
     button {
-      padding: 10px 20px;
+      width: 95%;
+      padding: 10px;
       background: black;
       color: white;
       border: none;
       cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .small {
+      margin-top: 10px;
+      font-size: 14px;
+      color: grey;
     }
   </style>
 </head>
 
 <body>
 
-<h1>👤 Customer Login</h1>
+<div class="box">
 
-<input id="username" placeholder="Enter your name">
-<br>
-<button onclick="login()">Login</button>
+  <h1>👤 Login</h1>
+
+  <input id="username" placeholder="Enter your name">
+
+  <button onclick="login()">Login</button>
+
+  <div class="small">Simple login (no password)</div>
+
+</div>
 
 <script>
 
+// 🚫 already login இருந்தா redirect
+if (localStorage.getItem("user")) {
+  window.location.href = "index.html";
+}
+
+// ✅ login function
 function login() {
   const name = document.getElementById("username").value;
 
@@ -47,7 +82,9 @@ function login() {
 
   localStorage.setItem("user", name);
 
-  window.location.href = "account.html";
+  alert("Welcome " + name + " ✅");
+
+  window.location.href = "index.html";
 }
 
 </script>
