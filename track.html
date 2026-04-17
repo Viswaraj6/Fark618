@@ -47,16 +47,21 @@
       position: relative;
     }
 
-    /* 👉 Arrow / line */
+    /* ✅ LINE FIXED */
     .step::after {
       content: "";
       position: absolute;
       top: 15px;
-      left: 50%;
+      left: 0;
       width: 100%;
       height: 4px;
       background: #ccc;
       z-index: -1;
+    }
+
+    .step:first-child::after {
+      left: 50%;
+      width: 50%;
     }
 
     .step:last-child::after {
@@ -73,15 +78,14 @@
       z-index: 2;
     }
 
-    /* ✅ Active dot */
     .active {
       background: green !important;
     }
 
-    /* ✅ Active line */
     .active-line::after {
       background: green !important;
     }
+
   </style>
 
 </head>
