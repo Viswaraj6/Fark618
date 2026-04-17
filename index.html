@@ -55,13 +55,26 @@
     button:disabled {
       background: grey;
     }
+  </style>
+</head>
+
+<body>
+
+<div id="cart" onclick="goToCart()">Cart: 0</div>
+
+<h1>FARK 618 🛍️</h1>
+
+<div id="products" class="products"></div>
+
 <script>
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let productsData = [];
 
+// cart count update
 document.getElementById("cart").innerText = "Cart: " + cart.length;
 
+// load products
 function loadProducts() {
   fetch("https://fark618-1.onrender.com/products")
   .then(res => res.json())
@@ -89,11 +102,10 @@ function loadProducts() {
 
     document.getElementById("products").innerHTML = html;
   })
-  .catch(err => {
-    console.log("ERROR:", err);
-  });
+  .catch(err => console.log("ERROR:", err));
 }
 
+// add to cart
 function addToCart(id) {
 
   const product = productsData.find(p => p._id == id);
@@ -129,10 +141,12 @@ function addToCart(id) {
   .then(() => loadProducts());
 }
 
+// go to cart
 function goToCart() {
   window.location.href = "cart.html";
 }
 
+// run
 loadProducts();
 
 </script>
