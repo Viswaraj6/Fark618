@@ -12,7 +12,7 @@ mongoose.connect("mongodb+srv://viswaraj6_db_user:IAkwXvTcUbIkrrEl@cluster0.n3jq
 .catch(err => console.log("Mongo Error:", err));
 
 
-// 📦 Product Schema (FIXED)
+// 📦 Product Schema
 const Product = mongoose.model("Product", {
   name: String,
   price: Number,
@@ -28,11 +28,9 @@ const Order = mongoose.model("Order", {
 });
 
 
-// ➕ ADD PRODUCT (FIXED SAFE)
+// ➕ ADD PRODUCT
 app.post("/add-product", async (req, res) => {
   try {
-    console.log("Incoming:", req.body);
-
     const product = new Product({
       name: req.body.name,
       price: Number(req.body.price),
@@ -40,9 +38,9 @@ app.post("/add-product", async (req, res) => {
       image: req.body.image
     });
 
-await product.save();
+    await product.save();
 
-res.json(product); // ✅ change pannunga
+    res.json(product); // ✅ important
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
@@ -50,18 +48,22 @@ res.json(product); // ✅ change pannunga
 });
 
 
-// 📥 GET PRODUCTS
+// 📥 GET PRODUCTS (ONLY ONE ROUTE)
 app.get("/products", async (req, res) => {
   try {
     const data = await Product.find();
+
+    console.log("Products:", data); // debug
+
     res.json(data);
   } catch (err) {
+    console.log(err);
     res.status(500).send(err);
   }
 });
 
 
-// ✏️ UPDATE PRODUCT (NEW)
+// ✏️ UPDATE PRODUCT
 app.put("/products/:id", async (req, res) => {
   try {
     await Product.findByIdAndUpdate(req.params.id, {
@@ -78,7 +80,7 @@ app.put("/products/:id", async (req, res) => {
 });
 
 
-// ❌ DELETE PRODUCT (NEW)
+// ❌ DELETE PRODUCT
 app.delete("/products/:id", async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
@@ -100,7 +102,8 @@ app.post("/order", async (req, res) => {
   }
 });
 
-// 📦 GET ORDERS ✅
+
+// 📦 GET ORDERS
 app.get("/orders", async (req, res) => {
   try {
     const data = await Order.find();
@@ -109,6 +112,14 @@ app.get("/orders", async (req, res) => {
     res.status(500).send(err);
   }
 });
+
+
+// 🏠 ROOT (IMPORTANT FOR RENDER)
+app.get("/", (req, res) => {
+  res.send("FARK618 API Running 🚀");
+});
+
+
 // 🚀 SERVER START
 const PORT = process.env.PORT || 5000;
 
